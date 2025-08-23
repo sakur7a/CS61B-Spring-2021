@@ -144,6 +144,25 @@ public class Model extends Observable {
                 }
             }
         }
+        /** I think there is a bug, it can give you superpowers: shuttle merging.
+         *  And It can pass all tests.
+         *
+         *  if (curr == null) {
+         *  continue;
+         *  }
+         *  for (int top = board.size() - 1; top >= row + 1; top -= 1) {
+         *  Tile t = board.tile(col, top);
+         *  if (t == null || t.value() == curr.value() && !st[col][top]) {
+         *  if (board.move(col, top, curr)) {
+         *  score += t.value() * 2;
+         *   st[col][top] = true;
+         *  }
+         *  changed = true;
+         *  break;
+         *  }
+         *  }
+         *
+         */
         board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
