@@ -1,5 +1,7 @@
 package deque;
 
+import java.util.Arrays;
+
 public class ArrayDeque<T> {
     private int size;
     private T[] array;
@@ -66,14 +68,14 @@ public class ArrayDeque<T> {
 
     public void resize(int capacity) {
         T[] copy = (T[]) new Object[capacity];
-        int i = (prev + 1) % array.length;
-        int k = size;
-        while (k > 0) {
-            copy[i] = array[i];
-            k -= 1;
-            i = (i + 1) % array.length;
+        int cur = (prev + 1) % array.length;
+        for (int i = 0; i < size; i++) {
+            copy[i] = array[cur];
+            cur = (cur + 1) % array.length;
         }
         array = copy;
+        prev = array.length - 1;
+        next = size;
     }
 
     public boolean isEmpty() {
