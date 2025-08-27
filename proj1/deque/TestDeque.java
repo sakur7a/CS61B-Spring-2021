@@ -1,8 +1,10 @@
 package deque;
 import static org.junit.Assert.*;
+
+import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 
-public class TestEmply {
+public class TestDeque {
 
     @Test
     public void testAddThreeRemove() {
@@ -88,6 +90,55 @@ public class TestEmply {
 
         bu.addLast(20);
         assertNotEquals("has different element", no, bu);
+    }
+
+    @Test
+    public void testThreeAddThreeRemove() {
+        ArrayDeque<Integer> no = new ArrayDeque<>();
+        ArrayDeque<Integer> bu = new ArrayDeque<>();
+
+        no.addLast(3);
+        no.addLast(4);
+        no.addLast(5);
+
+        bu.addLast(3);
+        bu.addLast(4);
+        bu.addLast(5);
+
+        assertEquals(no.removeLast(), bu.removeLast());
+        assertEquals(no.removeLast(), bu.removeLast());
+        assertEquals(no.removeLast(), bu.removeLast());
+    }
+
+    @Test
+    public void randomizedTes() {
+        ArrayDeque<Integer> L = new ArrayDeque<>();
+        ArrayDeque<Integer> B = new ArrayDeque<>();
+
+        int N = 500;
+        for (int i = 0; i < N; i += 1) {
+            int operationNumber = StdRandom.uniform(0, 3);
+            if (operationNumber == 0) {
+                // addLast
+                int randVal = StdRandom.uniform(0, 100);
+                L.addLast(randVal);
+                B.addLast(randVal);
+            } else if (operationNumber == 1) {
+                // size
+                int size_L = L.size();
+                int size_B = B.size();
+                assertEquals(size_L, size_B);
+            } else {
+                // removeLast
+                if (L.size() == 0) {
+                    continue;
+                } else {
+                    int removeLast_L = L.removeLast();
+                    int removeLast_B = B.removeLast();
+                    assertEquals(removeLast_L, removeLast_B);
+                }
+            }
+        }
     }
 
 
