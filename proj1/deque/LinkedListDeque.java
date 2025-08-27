@@ -4,7 +4,7 @@ import org.hamcrest.core.IsEqual;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> implements Iterable<T>{
+public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
 
     private class Node {
         public T item;
@@ -29,6 +29,7 @@ public class LinkedListDeque<T> implements Iterable<T>{
         sentinel.next = sentinel;
     }
 
+    @Override
     public void addFirst(T item) {
         Node add = new Node(item, sentinel, sentinel.next);
         sentinel.next.prev = add;
@@ -36,6 +37,7 @@ public class LinkedListDeque<T> implements Iterable<T>{
         size += 1;
     }
 
+    @Override
     public void addLast(T item) {
         Node add = new Node(item, sentinel.prev, sentinel);
         sentinel.prev.next = add;
@@ -43,6 +45,7 @@ public class LinkedListDeque<T> implements Iterable<T>{
         size += 1;
     }
 
+    @Override
     public T removeFirst() {
         if (isEmpty())  {
             return null;
@@ -54,7 +57,7 @@ public class LinkedListDeque<T> implements Iterable<T>{
         return value;
     }
 
-
+    @Override
     public T removeLast() {
         if (isEmpty())  {
             return null;
@@ -67,10 +70,12 @@ public class LinkedListDeque<T> implements Iterable<T>{
     }
 
 
+    @Override
     public int size() {
         return size;
     }
 
+    @Override
     public T get(int index) {
         Node i = sentinel.next;
         while (index > 0 && i != sentinel)
@@ -95,10 +100,8 @@ public class LinkedListDeque<T> implements Iterable<T>{
         return helper(index, sentinel);
     }
 
-    public boolean isEmpty() {
-        return size == 0;
-    }
 
+    @Override
     public void printDeque() {
         if (isEmpty()) {
             return;
