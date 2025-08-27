@@ -1,5 +1,7 @@
 package deque;
 
+import org.hamcrest.core.IsEqual;
+
 import java.util.Iterator;
 
 public class LinkedListDeque<T> implements Iterable<T>{
@@ -133,6 +135,28 @@ public class LinkedListDeque<T> implements Iterable<T>{
             T value = it.item;
             return value;
         }
+    }
+
+   @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (! (o instanceof LinkedListDeque)) {
+            return false;
+        }
+
+        LinkedListDeque<T> other = (LinkedListDeque<T>) o;
+        if (other.size != this.size) {
+            return false;
+        } else {
+            for (int i = 0;i < this.size; i++) {
+                if (!this.get(i).equals(other.get(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 }
