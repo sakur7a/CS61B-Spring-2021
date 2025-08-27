@@ -95,6 +95,20 @@ public class LinkedListDeque<T> {
         return size == 0;
     }
 
+    public void printDeque() {
+        if (isEmpty()) {
+            return;
+        }
+        Node i = sentinel;
+        while (i.next != sentinel) {
+            i = i.next;
+            T x = i.item;
+            System.out.print(x + " ");
+        }
+        System.out.println();
+    }
+
+
 
 
 
