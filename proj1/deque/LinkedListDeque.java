@@ -86,16 +86,15 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
     }
 
     private T helper(int index, Node d) {
-        Node i = d.next;
-        if (index == 0 || i == sentinel) {
-            return i.item;
+        if (index == 0 || d == sentinel) {
+            return d.item;
         } else {
-            return helper(index - 1, i.next);
+            return helper(index - 1, d.next);
         }
     }
 
     public T getRecursive(int index) {
-        return helper(index, sentinel);
+        return helper(index, sentinel.next);
     }
 
 
