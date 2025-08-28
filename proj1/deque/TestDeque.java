@@ -45,7 +45,7 @@ public class TestDeque {
         bu.addLast(3);
         bu.addLast(4);
         bu.addLast(5);
-        assertEquals("add same element, should be equal",no, bu);
+        assertEquals("add same element, should be equal", no, bu);
 
 
         bu.removeLast();
@@ -55,7 +55,7 @@ public class TestDeque {
         no.removeLast();
         no.removeLast();
 
-        assertEquals("null deque should be equal",no, bu);
+        assertEquals("null deque should be equal", no, bu);
 
         bu.addLast(20);
         assertNotEquals("has different element", no, bu);
@@ -125,17 +125,17 @@ public class TestDeque {
                 B.addLast(randVal);
             } else if (operationNumber == 1) {
                 // size
-                int size_L = L.size();
-                int size_B = B.size();
-                assertEquals(size_L, size_B);
+                int sizeL = L.size();
+                int sizeB = B.size();
+                assertEquals(sizeL, sizeB);
             } else {
                 // removeLast
                 if (L.size() == 0) {
                     continue;
                 } else {
-                    int removeLast_L = L.removeLast();
-                    int removeLast_B = B.removeLast();
-                    assertEquals(removeLast_L, removeLast_B);
+                    int removeLastL = L.removeLast();
+                    int removeLastB = B.removeLast();
+                    assertEquals(removeLastL, removeLastB);
                 }
             }
         }

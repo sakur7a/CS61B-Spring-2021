@@ -1,7 +1,5 @@
 package deque;
 
-import java.util.Arrays;
-
 import java.util.Iterator;
 
 
@@ -74,7 +72,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         return size;
     }
 
-    public void resize(int capacity) {
+    private void resize(int capacity) {
         T[] copy = (T[]) new Object[capacity];
         int cur = (prev + 1) % array.length;
         for (int i = 0; i < size; i++) {
@@ -114,12 +112,12 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     private class ArrayDequeIterator implements Iterator<T> {
 
         private int count;
-        private int cur_pos;
+        private int currentPosition;
 
 
         public ArrayDequeIterator() {
             count = 0;
-            cur_pos = prev;
+            currentPosition = prev;
         }
 
         @Override
@@ -129,9 +127,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
 
         @Override
         public T next() {
-            cur_pos = (cur_pos + 1) % array.length;
+            currentPosition = (currentPosition + 1) % array.length;
             count += 1;
-            return array[cur_pos];
+            return array[currentPosition];
         }
     }
 
@@ -140,7 +138,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         if (o == this) {
             return true;
         }
-        if (! (o instanceof ArrayDeque)) {
+        if (!(o instanceof ArrayDeque)) {
             return false;
         }
         ArrayDeque<T> other = (ArrayDeque<T>) o;

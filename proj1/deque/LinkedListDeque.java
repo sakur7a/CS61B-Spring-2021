@@ -1,15 +1,14 @@
 package deque;
 
-import org.hamcrest.core.IsEqual;
 
 import java.util.Iterator;
 
 public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
 
     private class Node {
-        public T item;
-        public Node next;
-        public Node prev;
+        private T item;
+        private Node next;
+        private Node prev;
 
         public Node(T i, Node p, Node n) {
             this.item = i;
@@ -78,8 +77,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
     @Override
     public T get(int index) {
         Node i = sentinel.next;
-        while (index > 0 && i != sentinel)
-        {
+        while (index > 0 && i != sentinel) {
             index -= 1;
             i = i.next;
         }
@@ -87,7 +85,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
         return value;
     }
 
-    public T helper(int index, Node d) {
+    private T helper(int index, Node d) {
         Node i = d.next;
         if (index == 0 || i == sentinel) {
             return i.item;
@@ -142,10 +140,11 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
 
    @Override
     public boolean equals(Object o) {
+
         if (o == this) {
             return true;
         }
-        if (! (o instanceof LinkedListDeque)) {
+        if (!(o instanceof LinkedListDeque)) {
             return false;
         }
 
