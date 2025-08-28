@@ -115,7 +115,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         private int currentPosition;
 
 
-        public ArrayDequeIterator() {
+        ArrayDequeIterator() {
             count = 0;
             currentPosition = prev;
         }

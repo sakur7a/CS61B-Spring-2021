@@ -144,17 +144,17 @@ public class TestDeque {
     @Test
     public void testEqualTwoArray() {
         ArrayDeque<Integer> Array = new ArrayDeque<>();
-        LinkedListDeque<Integer> List = new LinkedListDeque<>();
+        LinkedListDeque<Integer> list = new LinkedListDeque<>();
 
         Array.addLast(3);
         Array.addLast(4);
         Array.addLast(5);
 
-        List.addLast(3);
-        List.addLast(4);
-        List.addLast(5);
+        list.addLast(3);
+        list.addLast(4);
+        list.addLast(5);
 
-        assertEquals(Array, List);
+        assertEquals(Array, list);
     }
 
 
