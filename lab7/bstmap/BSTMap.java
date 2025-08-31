@@ -1,9 +1,11 @@
 package bstmap;
 
 import edu.princeton.cs.algs4.BST;
+import edu.princeton.cs.algs4.SET;
 
 import java.awt.*;
 import java.security.Key;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -123,10 +125,21 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K,V> {
         printInOrder(root);
     }
 
+    private void help(BSTNode r, Set<K> set) {
+        if (r == null) {
+            return;
+        }
+        help(r.left, set);
+        set.add(r.key);
+        help(r.right, set);
+    }
+
 
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        Set<K> emptySet = new HashSet<>();
+        help(root, emptySet);
+        return emptySet;
     }
 
 
