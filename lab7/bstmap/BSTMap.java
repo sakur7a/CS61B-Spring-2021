@@ -56,7 +56,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K,V> {
                 return true;
             }
         }
-        return true;
+        return false;
     }
 
 
@@ -109,8 +109,18 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K,V> {
         root = put(root, key, value);
     }
 
-    public void printInOrder() {
 
+    private void printInOrder(BSTNode r) {
+        if (r == null) {
+            return;
+        }
+        printInOrder(r.left);
+        System.out.print(r.key + " ");
+        printInOrder(r.right);
+    }
+
+    public void printInOrder() {
+        printInOrder(root);
     }
 
 
