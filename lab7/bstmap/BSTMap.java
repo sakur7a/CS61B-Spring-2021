@@ -2,11 +2,13 @@ package bstmap;
 
 import edu.princeton.cs.algs4.BST;
 import edu.princeton.cs.algs4.SET;
+import edu.princeton.cs.algs4.Stack;
 
 import java.awt.*;
 import java.security.Key;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K,V> {
@@ -153,9 +155,45 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K,V> {
         throw new UnsupportedOperationException();
     }
 
+    private class BSTMapIter implements Iterator<K> {
+        private Stack<BSTNode> stack;
+
+
+        public BSTMapIter() {
+            stack = new Stack<>();
+            pushLeft(root);
+        }
+
+
+        private void pushLeft(BSTNode r) {
+            while (r != null) {
+                stack.push(r);
+                r = r.left;
+            }
+        }
+
+
+        @Override
+        public boolean hasNext() {
+            return !stack.isEmpty();
+        }
+
+
+        @Override
+        public K next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            BSTNode cur = stack.pop();
+            pushLeft(cur.right);
+            return cur.key;
+        }
+    }
+
+
     @Override
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
+        return new BSTMapIter();
     }
 
 
