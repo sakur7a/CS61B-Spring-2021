@@ -6,10 +6,7 @@ import edu.princeton.cs.algs4.Stack;
 
 import java.awt.*;
 import java.security.Key;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K,V> {
 
@@ -145,16 +142,6 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K,V> {
     }
 
 
-    @Override
-    public V remove(K key) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
-    }
-
     private class BSTMapIter implements Iterator<K> {
         private Stack<BSTNode> stack;
 
@@ -194,6 +181,59 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K,V> {
     @Override
     public Iterator<K> iterator() {
         return new BSTMapIter();
+    }
+
+
+    @Override
+    public V remove(K key) {
+        if (!containsKey(key)) {
+            return null;
+        }
+        V findup = get(key);
+        root = remove(root, key);
+        return findup;
+    }
+
+    private BSTNode remove(BSTNode r, K key) {
+        if (r == null) {
+            return null;
+        }
+        if (key.compareTo(r.key) < 0) {
+            r.left = remove(r.left, key);
+        } else if (key.compareTo(r.key) > 0) {
+            r.right = remove(r.right, key);
+        } else {
+            if (r.right == null) {
+                return r.left;
+            }
+            if (r.left == null) {
+                return r.right;
+            }
+            BSTNode successor = getMin(r.right); // has two child tree
+            r.key = successor.key;
+            r.value = successor.value;
+            r.right = remove(r.right, successor.key);
+        }
+        int leftSize = r.left == null ? 0 : r.left.size;
+        int rightSize = r.right == null ? 0 : r.right.size;
+        r.size = 1 + leftSize + rightSize;
+        return r;
+    }
+
+    private BSTNode getMin(BSTNode r) {
+        while (r.left != null) {
+            r = r.left;
+        }
+        return r;
+    }
+
+
+    @Override
+    public V remove(K key, V value) {
+        if (Objects.equals(value, get(key))) {
+            return remove(key);
+        }
+        return null;
     }
 
 
