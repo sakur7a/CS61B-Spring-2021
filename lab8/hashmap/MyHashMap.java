@@ -89,17 +89,78 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     @Override
     public V remove(K key) {
+        int pos = key.hashCode() & 0x7FFFFFFF % buckets.length;
+        Collection<Node> bucket = buckets[pos];
+
+        Node needToremove = null;
+        for (Node node : bucket) {
+            if (node.key.equals(key)) {
+                needToremove = node;
+                break;
+            }
+        }
+        if (needToremove != null) {
+            V value = needToremove.value;
+            bucket.remove(needToremove);
+            size--;
+            return value;
+        }
         return null;
+        /*
+        else:
+        // 获取桶的迭代器
+        Iterator<Node> iterator = bucket.iterator();
+        while (iterator.hasNext()) {
+            Node node = iterator.next();
+            if (node.key.equals(key)) {
+                V value = node.value;
+                // 使用迭代器的 remove() 方法，这是安全的操作
+                iterator.remove();
+                size--;
+                return value;
+            }
+        }
+        */
     }
 
     @Override
     public V remove(K key, V value) {
+        int pos = key.hashCode() & 0x7FFFFFFF % buckets.length;
+        Collection<Node> bucket = buckets[pos];
+
+        Node needToremove = null;
+        for (Node node : bucket) {
+            if (node.key.equals(key) && node.value.equals(value)) {
+                needToremove = node;
+                break;
+            }
+        }
+        if (needToremove != null) {
+            bucket.remove(needToremove);
+            size--;
+            return value;
+        }
         return null;
     }
 
     @Override
     public Iterator<K> iterator() {
-        return null;
+        return new HashMapIter();
+    }
+
+    private class HashMapIter implements Iterator<K> {
+        public HashMapIter() {
+        }
+
+        @Override
+        public boolean hasNext() {
+            return size != 0;
+        }
+
+        @Override
+        public K next() {
+            return null;
+        }
     }
 
     /**
