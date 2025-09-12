@@ -59,7 +59,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     public void put(K key, V value) {
         int pos = key.hashCode() & 0x7FFFFFFF % buckets.length;
         Collection<Node> bucket = buckets[pos];
-        Boolean st = false;
+        boolean st = false;
         for (Node i : bucket) {
             if (i.key.equals(key)) {
                 i.value = value;
@@ -78,14 +78,37 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     @Override
     public Set<K> keySet() {
-        Set<K> set = new HashSet<>();
-        for (Collection<Node> bucket : buckets) {
-            for (Node node : bucket) {
-                set.add(node.key);
-            }
-        }
-        return set;
+        return new KeySet();
     }
+
+    private class KeySet extends AbstractSet<K> {
+
+        @Override
+        public Iterator<K> iterator() {
+            return MyHashMap.this.iterator();
+        }
+
+        @Override
+        public int size() {
+            return size;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return MyHashMap.this.containsKey((K) o);
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            if (MyHashMap.this.containsKey((K) o)) {
+                MyHashMap.this.remove((K) o);
+                return true;
+            }
+            return false;
+        }
+    }
+
+
 
     @Override
     public V remove(K key) {
@@ -149,17 +172,47 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     }
 
     private class HashMapIter implements Iterator<K> {
+
+        private int nodeLeft;
+        private int bucketsIndex;
+        private Iterator<Node> Iter;
+
         public HashMapIter() {
+            nodeLeft = size;
+            bucketsIndex = 0;
+            findNextIter();
+        }
+
+        public void findNextIter() {
+            if (Iter != null && Iter.hasNext()) {
+                return;
+            }
+            while (bucketsIndex < buckets.length) {
+                Iterator<Node> temp = buckets[bucketsIndex].iterator();
+                if (temp.hasNext()) {
+                    Iter = temp;
+                    return;
+                }
+                bucketsIndex++;
+            }
         }
 
         @Override
         public boolean hasNext() {
-            return size != 0;
+            return nodeLeft > 0;
         }
 
         @Override
         public K next() {
-            return null;
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            if (!Iter.hasNext()) {
+                bucketsIndex++;
+                findNextIter();
+            }
+            nodeLeft--;
+            return Iter.next().key;
         }
     }
 
