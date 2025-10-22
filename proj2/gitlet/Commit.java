@@ -2,7 +2,15 @@ package gitlet;
 
 // TODO: any imports you need here
 
+import java.io.File;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date; // TODO: You'll likely use this in this class
+import java.util.List;
+import java.util.Locale;
+
+import static gitlet.Repository.*;
+import static gitlet.Utils.*;
 
 /** Represents a gitlet commit object.
  *  TODO: It's a good idea to give a description here of what else this Class
@@ -10,7 +18,7 @@ import java.util.Date; // TODO: You'll likely use this in this class
  *
  *  @author TODO
  */
-public class Commit {
+public class Commit implements Serializable {
     /**
      * TODO: add instance variables here.
      *
@@ -21,6 +29,47 @@ public class Commit {
 
     /** The message of this Commit. */
     private String message;
+    /** The timestamp of this Commit. */
+    private String timestamp;
+    /** A list of parent commit IDs. For merge commits, this will have more than one. */
+    private List<String> parent;
+    /** A list of blob IDs tracked by this commit. */
+    private List<String> blobId;
 
     /* TODO: fill in the rest of this class. */
+
+
+    Commit(String message, Date date, List<String>parent, List<String> blobId) {
+        this.message = message;
+        this.timestamp = getTimeStamp(date);
+        this.parent = parent;
+        this.blobId = blobId;
+    }
+
+    /** Add a commit */
+    public static void makeCommit(String message, Date d, List<String> parent, List<String> blobId)  {
+        Commit it = new Commit(message, d, parent, blobId);
+        it.saveCommit();
+    }
+
+    public void saveCommit() {
+        File outFile = Utils.join(OBJECTS_DIR, this.getUid());
+        writeObject(outFile, this);
+    }
+
+    /** Calculate the uid of each commit */
+    public String getUid() {
+        return sha1((Object) serialize(this));
+    }
+
+    /** Convert the Date class to a format string */
+    private static String getTimeStamp(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.US);
+         return formatter.format(date);
+    }
+
+
+
+
+
 }
