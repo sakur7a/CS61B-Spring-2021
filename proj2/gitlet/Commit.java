@@ -1,13 +1,9 @@
 package gitlet;
 
-// TODO: any imports you need here
-
 import java.io.File;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.Date; // TODO: You'll likely use this in this class
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static gitlet.Repository.*;
 import static gitlet.Utils.*;
@@ -16,7 +12,7 @@ import static gitlet.Utils.*;
  *  TODO: It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
- *  @author TODO
+ *  @author sakura
  */
 public class Commit implements Serializable {
     /**
@@ -32,22 +28,25 @@ public class Commit implements Serializable {
     /** The timestamp of this Commit. */
     private String timestamp;
     /** A list of parent commit IDs. For merge commits, this will have more than one. */
-    private List<String> parent;
-    /** A list of blob IDs tracked by this commit. */
-    private List<String> blobId;
+    private List<String> parents;
+
+    /**  */
+    private HashMap<String, String> pathToBlobId;
+
 
     /* TODO: fill in the rest of this class. */
 
 
-    Commit(String message, Date date, List<String>parent, List<String> blobId) {
+    Commit(String message, Date date, List<String> parents, HashMap<String, String> pathToBlobId) {
         this.message = message;
         this.timestamp = getTimeStamp(date);
-        this.parent = parent;
-        this.blobId = blobId;
+        this.parents = parents;
+        this.pathToBlobId = pathToBlobId;
     }
 
+
     /** Add a commit */
-    public static void makeCommit(String message, Date d, List<String> parent, List<String> blobId)  {
+    public static void createCommit(String message, Date d, List<String> parent, List<String> blobId)  {
         Commit it = new Commit(message, d, parent, blobId);
         it.saveCommit();
     }
@@ -59,7 +58,7 @@ public class Commit implements Serializable {
 
     /** Calculate the uid of each commit */
     public String getUid() {
-        return sha1((Object) serialize(this));
+        return sha1(serialize(this));
     }
 
     /** Convert the Date class to a format string */

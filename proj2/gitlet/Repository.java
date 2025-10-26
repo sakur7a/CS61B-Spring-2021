@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import static gitlet.Utils.*;
 
@@ -16,7 +17,8 @@ import static gitlet.Utils.*;
  * └── .gitlet（GITLET_DIR）
  *     ├── objects（OBJECTS_DIR）
  *     ├── refs（REFS_DIR）
- *         └── heads（HEADS_DIR）
+ *     ├   └── heads（HEADS_DIR）
+ *     ├── addingstage
  *     └── HEAD（HEAD_FILE，文件）
  *
  *  @author TODO
@@ -38,9 +40,13 @@ public class Repository {
     public static final File REFS_DIR = join(GITLET_DIR, "refs");
     public static final File HEADS_DIR = join(REFS_DIR, "heads");
     public static final File HEAD_FILE = join(GITLET_DIR, "HEAD");
+    public static final File INDEX = join(GITLET_DIR, "index");
+
+    public HashMap<String, String> stagingArea;
 
     /* TODO: fill in the rest of this class. */
 
+    // Gitlet init
     public static void init() throws IOException {
         OBJECTS_DIR.mkdirs();
         HEADS_DIR.mkdirs();
@@ -50,8 +56,8 @@ public class Repository {
         Commit initCommit = new Commit(
                 "initial commit",
                 new Date(0),
-                new ArrayList<>(),
-                new ArrayList<>()
+                new ArrayList<String>(),
+                new HashMap<>()
         );
         initCommit.saveCommit();
 
@@ -64,6 +70,11 @@ public class Repository {
         // Setting HEAD point to master branch
         writeContents(HEAD_FILE, "ref: refs/heads/master");
     }
+
+    // Reading a file
+
+
+
 
 
 
