@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 
 import static gitlet.Utils.*;
 import static gitlet.Repository.*;
@@ -40,6 +40,11 @@ public class Main {
                     System.exit(0);
                 }
 
+                if (!GITLET_DIR.exists()) {
+                    System.out.println("Not in an initialized Gitlet directory.");
+                    System.exit(0);
+                }
+
                 String filename = args[1];
                 File fileToAdd = join(CWD, filename);
 
@@ -50,31 +55,23 @@ public class Main {
                 }
 
                 // 读取文件内容转化为字节流，计算出对应的sha1值（blobID）
-                byte[] content = Utils.readContents(fileToAdd);
-                String uid = sha1(content);
+                byte[] bytes = Utils.readContents(fileToAdd);
 
-                // 如果 blob 不存在，则创建并保存它
-                File blobFile = join(OBJECTS_DIR, uid);
-                if (!blobFile.exists()) {
-                    writeContents(blobFile, content);
-                }
+                Blob blob = new Blob(bytes);
+                blob.save();
 
-                // 更新暂存区，将index文件反序列化，获取暂存区 Map
-                HashMap<String, String> stagingArea = new HashMap<>();
-                if (INDEX.exists()) {
-                    stagingArea = readObject(INDEX, HashMap.class);
-                }
-
-                // 将 文件名 -> blob ID 的映射关系放入暂存区
-                stagingArea.put(filename, uid);
-
-                // 将更新后的暂存区 Map 序列化并写回 index 文件
-                writeObject(INDEX, stagingArea);
-
+                Staging stagingArea = new Staging();
+                stagingArea.add(filename, blob.getUid());
+                stagingArea.save();
                 break;
             case "commit":
                 if (args.length != 2) {
                     System.out.println("Incorrect operands.");
+                    System.exit(0);
+                }
+
+                if (!GITLET_DIR.exists()) {
+                    System.out.println("Not in an initialized Gitlet directory.");
                     System.exit(0);
                 }
 
@@ -85,18 +82,26 @@ public class Main {
                     System.exit(0);
                 }
 
-                // 暂存区为空
-                if (!INDEX.exists()) {
+                // 读取暂存区
+                Staging staging = new Staging();
+
+                // 暂存区为空，退出
+                if (staging.isEmpty()) {
                     System.out.println("No changes added to the commit.");
                     System.exit(0);
                 }
 
-                Date date = new Date();
+                String headCommitid = getHeadCommitId();
+                List<String> parents = new ArrayList<>();
+                parents.add(headCommitid);
 
+                Commit commit = new Commit(message, new Date(), parents, staging.getBlob());
+                commit.save();
 
+                updateHead(commit.getUid());
 
-
-
+                // commmit之后清空暂存区
+                staging.clear();
                 break;
         }
     }

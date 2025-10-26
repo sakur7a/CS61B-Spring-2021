@@ -41,7 +41,7 @@ public class Repository {
     public static final File HEADS_DIR = join(REFS_DIR, "heads");
     public static final File HEAD_FILE = join(GITLET_DIR, "HEAD");
     public static final File INDEX = join(GITLET_DIR, "index");
-
+    public static final File masterBranch = join(HEADS_DIR, "master");
     public HashMap<String, String> stagingArea;
 
     /* TODO: fill in the rest of this class. */
@@ -59,19 +59,33 @@ public class Repository {
                 new ArrayList<String>(),
                 new HashMap<>()
         );
-        initCommit.saveCommit();
-
-        // Create master branch and point to the initial commit
-        String initCommitUid = initCommit.getUid();
-        File masterBranch = join(HEADS_DIR, "master");
-        masterBranch.createNewFile();
-        writeContents(masterBranch, initCommitUid);
+        initCommit.save();
 
         // Setting HEAD point to master branch
         writeContents(HEAD_FILE, "ref: refs/heads/master");
+
+        // Create master branch and point to the initial commit
+        updateHead(initCommit.getUid());
     }
 
-    // Reading a file
+    //
+    public static String getCurrentBranchName() {
+        String headContent = readContentsAsString(HEAD_FILE);
+        String branchPath = headContent.split(" ")[1];
+        return new File(branchPath).getName();
+    }
+
+    public static String getHeadCommitId() {
+        String currentBranchName = getCurrentBranchName();
+        File branchFile = join(HEADS_DIR, currentBranchName);
+        return readContentsAsString(branchFile);
+    }
+
+    public static void updateHead(String commitUid) {
+        String currentBranchName = getCurrentBranchName();
+        File currentBranchFile = join(HEADS_DIR, currentBranchName);
+        writeContents(currentBranchFile, commitUid);
+    }
 
 
 

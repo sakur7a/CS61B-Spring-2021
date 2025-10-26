@@ -44,14 +44,7 @@ public class Commit implements Serializable {
         this.pathToBlobId = pathToBlobId;
     }
 
-
-    /** Add a commit */
-    public static void createCommit(String message, Date d, List<String> parent, List<String> blobId)  {
-        Commit it = new Commit(message, d, parent, blobId);
-        it.saveCommit();
-    }
-
-    public void saveCommit() {
+    public void save() {
         File outFile = Utils.join(OBJECTS_DIR, this.getUid());
         writeObject(outFile, this);
     }
@@ -62,7 +55,7 @@ public class Commit implements Serializable {
     }
 
     /** Convert the Date class to a format string */
-    private static String getTimeStamp(Date date) {
+    public String getTimeStamp(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.US);
          return formatter.format(date);
     }
