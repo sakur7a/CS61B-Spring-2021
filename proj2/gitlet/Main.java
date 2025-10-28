@@ -2,9 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static gitlet.Utils.*;
 import static gitlet.Repository.*;
@@ -60,7 +58,7 @@ public class Main {
                 Blob blob = new Blob(bytes);
                 blob.save();
 
-                Staging stagingArea = new Staging();
+                Staging stagingArea = Staging.fromFile();
                 stagingArea.add(filename, blob.getUid());
                 stagingArea.save();
                 break;
@@ -83,7 +81,7 @@ public class Main {
                 }
 
                 // 读取暂存区
-                Staging staging = new Staging();
+                Staging staging = Staging.fromFile();
 
                 // 暂存区为空，退出
                 if (staging.isEmpty()) {
@@ -91,17 +89,89 @@ public class Main {
                     System.exit(0);
                 }
 
+                // 获取上一次的commit，即head
                 String headCommitid = getHeadCommitId();
+                Commit parentCommit = readObject(getHeadCommitFile(), Commit.class);
+                HashMap<String, String> currentBlobToFile = new HashMap<>(parentCommit.getPathToBlobId());
+
+                // 应用现在的暂存区文件
+                currentBlobToFile.putAll(staging.getFilenameToBlobId());
+
+                // 删除被标记的文件
+                for (String fileName : staging.getToRemoveFilename()) {
+                    currentBlobToFile.remove(fileName);
+                }
+
+
                 List<String> parents = new ArrayList<>();
                 parents.add(headCommitid);
 
-                Commit commit = new Commit(message, new Date(), parents, staging.getBlob());
+                Commit commit = new Commit(message, new Date(), parents, currentBlobToFile);
                 commit.save();
 
                 updateHead(commit.getUid());
 
                 // commmit之后清空暂存区
                 staging.clear();
+                break;
+            case "rm":
+                if (args.length != 2) {
+                    System.out.println("Incorrect operands.");
+                    System.exit(0);
+                }
+
+                String filenameToRemove = args[1];
+
+                Staging currentStaging = Staging.fromFile();
+                Commit headCommit = readObject(getHeadCommitFile(), Commit.class);
+
+                boolean flag = false;
+
+                if (currentStaging.contains(filenameToRemove)) {
+                    flag = true;
+                    currentStaging.remove(filenameToRemove);
+                }
+
+                if (headCommit.contains(filenameToRemove)) {
+                    flag = true;
+                    currentStaging.addToRemove(filenameToRemove);
+                    restrictedDelete(filenameToRemove);
+                }
+
+                if (!flag) {
+                    System.out.println("No reason to remove the file.");
+                    System.exit(0);
+                } else {
+                    currentStaging.save();
+                }
+
+                break;
+            case "log":
+
+                break;
+            case "global-log":
+
+                break;
+            case "find":
+
+                break;
+            case "status":
+
+                break;
+            case "checkout":
+
+                break;
+            case "branch":
+
+                break;
+            case "rm-branch":
+
+                break;
+            case "reset":
+
+                break;
+            case "merge":
+
                 break;
         }
     }

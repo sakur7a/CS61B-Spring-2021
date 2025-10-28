@@ -40,6 +40,7 @@ public class Repository {
     public static final File REFS_DIR = join(GITLET_DIR, "refs");
     public static final File HEADS_DIR = join(REFS_DIR, "heads");
     public static final File HEAD_FILE = join(GITLET_DIR, "HEAD");
+    /** The staing area */
     public static final File INDEX = join(GITLET_DIR, "index");
     public static final File masterBranch = join(HEADS_DIR, "master");
     public HashMap<String, String> stagingArea;
@@ -86,6 +87,14 @@ public class Repository {
         File currentBranchFile = join(HEADS_DIR, currentBranchName);
         writeContents(currentBranchFile, commitUid);
     }
+
+    public static File getHeadCommitFile() {
+        return join(OBJECTS_DIR, getHeadCommitId());
+    }
+
+
+
+
 
 
 

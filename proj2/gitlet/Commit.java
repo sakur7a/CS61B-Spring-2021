@@ -30,7 +30,8 @@ public class Commit implements Serializable {
     /** A list of parent commit IDs. For merge commits, this will have more than one. */
     private List<String> parents;
 
-    /**  */
+    /** 键 (Key)：是一个 String，代表被跟踪文件的路径和文件名 (例如 'src/Main.java' 或者 'a.txt')。
+     值 (Value)：也是一个 String，代表这个文件内容所对应的 Blob 对象的 SHA-1 ID。 */
     private HashMap<String, String> pathToBlobId;
 
 
@@ -58,6 +59,15 @@ public class Commit implements Serializable {
     public String getTimeStamp(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.US);
          return formatter.format(date);
+    }
+
+    /** 检查Commit是否跟踪文件 */
+    public boolean contains(String filename) {
+        return this.pathToBlobId.containsKey(filename);
+    }
+
+    public HashMap<String, String> getPathToBlobId() {
+        return this.pathToBlobId;
     }
 
 
