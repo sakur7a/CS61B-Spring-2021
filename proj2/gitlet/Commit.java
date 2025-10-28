@@ -40,7 +40,7 @@ public class Commit implements Serializable {
 
     Commit(String message, Date date, List<String> parents, HashMap<String, String> pathToBlobId) {
         this.message = message;
-        this.timestamp = getTimeStamp(date);
+        this.timestamp = convertToFormatTimestamp(date);
         this.parents = parents;
         this.pathToBlobId = pathToBlobId;
     }
@@ -56,7 +56,7 @@ public class Commit implements Serializable {
     }
 
     /** Convert the Date class to a format string */
-    public String getTimeStamp(Date date) {
+    public String convertToFormatTimestamp(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.US);
          return formatter.format(date);
     }
@@ -70,8 +70,24 @@ public class Commit implements Serializable {
         return this.pathToBlobId;
     }
 
+    public List<String> getParents() {
+        return parents;
+    }
 
+    public String getMessage() {
+        return message;
+    }
 
+    public String getTimestamp() {
+        return timestamp;
+    }
 
-
+    // 打印信息
+    public void print() {
+        System.out.println("===");
+        System.out.println("commit " + getUid());
+        System.out.println("Date: " + timestamp);
+        System.out.println(message);
+        System.out.println();
+    }
 }
