@@ -34,28 +34,20 @@ public class Main {
                 break;
 
             case "add":
+                checkInit();
                 if (args.length != 2) {
                     System.out.println("Incorrect operands.");
                     System.exit(0);
                 }
-
-                if (!GITLET_DIR.exists()) {
-                    System.out.println("Not in an initialized Gitlet directory.");
-                    System.exit(0);
-                }
-
                 String filename = args[1];
                 gitletAdd(filename);
                 break;
 
             case "commit":
+                checkInit();
+
                 if (args.length != 2) {
                     System.out.println("Incorrect operands.");
-                    System.exit(0);
-                }
-
-                if (!GITLET_DIR.exists()) {
-                    System.out.println("Not in an initialized Gitlet directory.");
                     System.exit(0);
                 }
 
@@ -70,6 +62,8 @@ public class Main {
                 break;
 
             case "rm":
+                checkInit();
+
                 if (args.length != 2) {
                     System.out.println("Incorrect operands.");
                     System.exit(0);
@@ -80,38 +74,73 @@ public class Main {
                 break;
 
             case "log":
+                checkInit();
                 gitletLog();
                 break;
 
             case "global-log":
+                checkInit();
                 gitletGlobalLog();
                 break;
 
             case "find":
+                checkInit();
+                if (args.length != 2) {
+                    System.out.println("Incorrect operands.");
+                    System.exit(0);
+                }
 
+                String messageInFind = args[1];
+                gitletFind(messageInFind);
                 break;
 
             case "status":
-
+                checkInit();
+                gitletStatus();
                 break;
 
             case "checkout":
+                checkInit();
+                if (args.length == 3) {
+                    if (!args[1].equals("--")) {
+                        System.out.println("Incorrect operands.");
+                        System.exit(0);
+                    }
+                    checkoutFile(args[2]);
 
+                } else if (args.length == 4) {
+                    if (!args[2].equals("--")) {
+                        System.out.println("Incorrect operands.");
+                        System.exit(0);
+                    }
+                    checkoutFileFromCommit(args[1], args[3]);
+
+                } else if (args.length == 2) {
+                    checkoutBranch(args[1]);
+
+                } else {
+                    System.out.println("Incorrect operands.");
+                    System.exit(0);
+                }
                 break;
 
             case "branch":
+                checkInit();
 
                 break;
 
             case "rm-branch":
+                checkInit();
 
                 break;
 
             case "reset":
+                checkInit();
 
                 break;
 
             case "merge":
+                checkInit();
 
                 break;
         }
