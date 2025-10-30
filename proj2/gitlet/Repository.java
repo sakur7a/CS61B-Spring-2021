@@ -54,13 +54,12 @@ public class Repository {
         Commit initCommit = new Commit(
                 "initial commit",
                 new Date(0),
-                new ArrayList<String>(),
+                new ArrayList<>(),
                 new HashMap<>()
         );
         initCommit.save();
 
-        // Setting HEAD point to master branch
-        writeContents(HEAD_FILE, "ref: refs/heads/master");
+        pointHEADToNewBranch("master");
 
         // Create master branch and point to the initial commit
         updateHead(initCommit.getUid());
@@ -298,8 +297,8 @@ public class Repository {
         // 工作区有未跟踪的文件会被覆盖
 
         // 获取目标分支commit中跟踪的文件
-        String targetCommitUid = readContentsAsString(join(HEADS_DIR branch));
-        Commit targetCommit = readObject(join(OBJECTS_DIR, targetCommitUid) ,Commit.class)
+        String targetCommitUid = readContentsAsString(join(HEADS_DIR, branch));
+        Commit targetCommit = readObject(join(OBJECTS_DIR, targetCommitUid) ,Commit.class);
         Set<String> targetTrackedFile = targetCommit.getPathToBlobId().keySet();
 
         // 获取当前commit和暂存区跟踪的文件
@@ -307,26 +306,45 @@ public class Repository {
         Set<String> headTractedFile = headCommit.getPathToBlobId().keySet();
         Staging currentStaging = Staging.fromFile();
         Set<String> stagingFile = currentStaging.getFilenameToBlobId().keySet();
+        Set<String> stagingFileToRemove = currentStaging.getToRemoveFilename();
 
         // 找出工作目录的未跟踪文件，并检查其是否会被覆盖
         List<String> cwdFile = plainFilenamesIn(CWD);
         if (cwdFile != null) {
             for (String file : cwdFile) {
                 // 条件：文件未被当前 commit 跟踪，也未被暂存，但将被目标分支检出
-                if (!headTractedFile.contains(file) && !stagingFile.contains(file) && targetCommit.contains(file)) {
+                if (!headTractedFile.contains(file)
+                        && !stagingFile.contains(file)
+                        && !stagingFileToRemove.contains(file)
+                        && targetTrackedFile.contains(file)) {
                     System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                     System.exit(0);
                 }
             }
         }
 
+        for (String filename : targetTrackedFile) {
+            String blobId = targetCommit.getPathToBlobId().get(filename);
+            File file = join(OBJECTS_DIR, blobId);
+            byte[] fileContent = readContents(file);
 
-        // TODO: 检出目标分支的所有文件
-        // TODO: 删除多余的被跟踪文件
-        // TODO: 清空暂存区
-        // TODO: 更新 HEAD 指针
+            File fileInCWD = join(CWD, filename);
+            writeContents(fileInCWD, fileContent);
+        }
 
+        // 遍历当前分支 commit 跟踪的文件。如果某个文件在当前分支存在，但在目标分支不存在，那么它就应该从工作目录中被删除。
+        for (String filename : headTractedFile) {
+            if (!targetTrackedFile.contains(filename)) {
+                restrictedDelete(filename);
+            }
+        }
 
+        // 清空暂存区
+        currentStaging.clear();
+
+        // 更新HEAD指针
+        pointHEADToNewBranch(branch);
+        updateHead(targetCommitUid);
     }
 
     private static void checkoutHelper(String uid, String filename) {
@@ -346,6 +364,7 @@ public class Repository {
         File fileInCWD = join(CWD, filename);
         writeContents(fileInCWD, fileContent);
     }
+
 
 
     public static String getCurrentBranchName() {
@@ -376,6 +395,11 @@ public class Repository {
             System.exit(0);
         }
     }
+
+    public static void pointHEADToNewBranch(String branch) {
+        writeContents(HEAD_FILE, "ref: refs/heads/" + branch);
+    }
+
 
 
 
